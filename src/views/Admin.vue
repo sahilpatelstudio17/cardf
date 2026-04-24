@@ -757,7 +757,7 @@ const getDriverPickupLocation = (sub) => {
 const getCarImage = (car) => {
   if (!car?.image) return null
   if (car.image.startsWith('http')) return car.image
-  return `http://localhost:8000${car.image}`
+  return `https://cardb-1.onrender.com${car.image}`
 }
 
 const showSuccess = (msg) => {
