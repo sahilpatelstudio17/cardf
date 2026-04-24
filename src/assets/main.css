@@ -1,0 +1,1623 @@
+@import './base.css';
+
+:root {
+  --cs-safe-top: env(safe-area-inset-top, 0px);
+  --cs-navbar-offset: calc(78px + var(--cs-safe-top));
+}
+
+/* ================================================
+   CarSwap Premium UI - Clean Startup Design
+   ================================================ */
+
+/* Full-width app container */
+#app {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  overflow-x: hidden;
+}
+
+/* ================================================
+   Typography
+   ================================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
+
+p {
+  line-height: 1.7;
+  color: #555;
+}
+
+/* ================================================
+   Sticky Navbar
+   ================================================ */
+.cs-navbar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+  padding: calc(0.7rem + var(--cs-safe-top)) 2rem 0.7rem;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.cs-navbar.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+}
+
+.cs-navbar .brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.cs-navbar .brand span {
+  color: #ff4d30;
+}
+
+.cs-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.cs-nav-links .nav-link {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.cs-nav-links .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #ff4d30;
+  transition: width 0.3s ease;
+}
+
+.cs-nav-links .nav-link:hover {
+  color: #ff4d30;
+  background: transparent;
+}
+
+.cs-nav-links .nav-link:hover::after {
+  width: 100%;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #111;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ================================================
+   Buttons
+   ================================================ */
+.cs-btn-primary {
+  background: #ff4d30;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.cs-btn-primary:hover {
+  background: #e63e20;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 77, 48, 0.3);
+}
+
+.cs-btn-ghost {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  padding: 0.7rem 1.7rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.cs-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+}
+
+.cs-btn-outline {
+  background: transparent;
+  color: #ff4d30;
+  border: 2px solid #ff4d30;
+  padding: 0.7rem 1.7rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.cs-btn-outline:hover {
+  background: #ff4d30;
+  color: #fff;
+}
+
+/* ================================================
+   Hero Section
+   ================================================ */
+.cs-hero {
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 0;
+}
+
+.cs-hero img.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.cs-hero .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+  z-index: 2;
+}
+
+.cs-hero .hero-content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding: 2rem 5%;
+}
+
+.cs-hero .hero-inner {
+  max-width: 700px;
+}
+
+.cs-hero h1 {
+  color: #fff;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+}
+
+.cs-hero .lead {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 550px;
+}
+
+.cs-hero .btn-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Feature Cards */
+.feature-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 4rem;
+  padding: 0 5%;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+}
+
+.feature-card h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ================================================
+   Sections Common Styles
+   ================================================ */
+section {
+  scroll-margin-top: 80px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header h2 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.section-header h2 span {
+  color: #ff4d30;
+}
+
+.section-header p {
+  max-width: 600px;
+  margin: 0 auto;
+  color: #666;
+}
+
+/* ================================================
+   Car Grid
+   ================================================ */
+.cs-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .cs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cs-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .cs-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+/* ================================================
+   Car Card - Premium Design
+   ================================================ */
+.cs-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.cs-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+.cs-card .image-wrapper {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5f5f5 0%, #efefef 100%);
+}
+
+.cs-card .image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cs-card:hover .image {
+  transform: scale(1.08);
+}
+
+.cs-card .category-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.cs-card .plan-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 25px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.cs-card .plan-badge.basic {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.cs-card .plan-badge.premium {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.cs-card .plan-badge.luxury {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+/* Car Tier Badges - Global Styles */
+.car-tier-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 25px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.car-tier-badge.tier-basic {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.car-tier-badge.tier-premium {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.car-tier-badge.tier-luxury {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+/* Car Category Badges - Global Styles */
+.car-category-badge {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 25px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(30, 30, 40, 0.85);
+  color: white;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ================================================
+   Cars Page - Tier Filter
+   ================================================ */
+.cars-header-wrapper {
+  margin-bottom: 3rem;
+}
+
+.cars-header-wrapper h2 {
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.fleet-description {
+  color: #666;
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-btn {
+  padding: 0.65rem 1.5rem;
+  background: #f5f5f5;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.95rem;
+}
+
+.filter-btn:hover {
+  border-color: #ff4d30;
+  background: rgba(255, 77, 48, 0.05);
+  box-shadow: 0 4px 12px rgba(255, 77, 48, 0.15);
+}
+
+.filter-btn.active {
+  background: #ff4d30;
+  color: #fff;
+  border-color: #ff4d30;
+  box-shadow: 0 6px 20px rgba(255, 77, 48, 0.3);
+}
+
+.filters-section {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.filter-select {
+  padding: 0.65rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.filter-select:hover {
+  border-color: #ff4d30;
+  box-shadow: 0 2px 8px rgba(255, 77, 48, 0.1);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #ff4d30;
+  box-shadow: 0 0 0 3px rgba(255, 77, 48, 0.1);
+}
+
+.btn-reset-filters {
+  padding: 0.65rem 1.5rem;
+  background: #ff4d30;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.btn-reset-filters:hover {
+  background: #e64319;
+  box-shadow: 0 4px 12px rgba(255, 77, 48, 0.3);
+}
+
+.btn-reset-filters:active {
+  transform: scale(0.98);
+}
+
+/* ================================================
+   Subscription Info Card
+   ================================================ */
+.subscription-info-card {
+  background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.info-header h3 {
+  color: #1a1a1a;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.plan-badge {
+  background: #ff4d30;
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-item .label {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item .value {
+  font-size: 1.1rem;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.info-item .value.warning {
+  color: #d32f2f;
+}
+
+.booking-limit-notice {
+  background: rgba(255, 152, 0, 0.08);
+  border-left: 3px solid #ff9800;
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #e65100;
+  margin-top: 1rem;
+}
+
+
+/* ================================================
+   Cars Page - Sidebar Layout
+   ================================================ */
+.cars-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.cars-sidebar {
+  flex-shrink: 0;
+  width: 220px;
+  position: sticky;
+  top: 2rem;
+}
+
+.btn-filter-toggle {
+  width: 100%;
+  padding: 1rem;
+  background: #ff4d30;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.btn-filter-toggle:hover {
+  background: #e64319;
+  box-shadow: 0 4px 12px rgba(255, 77, 48, 0.3);
+}
+
+.btn-filter-toggle:active {
+  transform: scale(0.98);
+}
+
+.filter-panel {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-panel h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.filter-group-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group-sidebar label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.filter-group-sidebar .filter-select {
+  min-width: auto;
+  width: 100%;
+}
+
+.btn-reset-filters-sidebar {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #ff4d30;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.btn-reset-filters-sidebar:hover {
+  background: #e64319;
+  box-shadow: 0 4px 12px rgba(255, 77, 48, 0.3);
+}
+
+.btn-reset-filters-sidebar:active {
+  transform: scale(0.98);
+}
+
+.cars-main {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .cars-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .cars-sidebar {
+    width: 100%;
+    position: relative;
+    top: 0;
+  }
+
+  .filter-panel {
+    display: none;
+  }
+
+  .filter-panel.active {
+    display: block;
+  }
+}
+
+.cs-card .body {
+  padding: 1.5rem;
+}
+
+.cs-card .title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.cs-card .subtitle {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.cs-card .price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ff4d30;
+}
+
+.cs-card .price span {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #888;
+}
+
+/* ================================================
+   Subscription Plan Cards
+   ================================================ */
+.plan-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.plan-card:hover {
+  border-color: #ff4d30;
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(255, 77, 48, 0.15);
+}
+
+.plan-card.featured {
+  border-color: #ff4d30;
+  transform: scale(1.02);
+}
+
+.plan-card.featured::before {
+  content: 'Most Popular';
+  position: absolute;
+  top: 1rem;
+  right: -2rem;
+  background: #ff4d30;
+  color: #fff;
+  padding: 0.25rem 2.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transform: rotate(45deg);
+  text-transform: uppercase;
+}
+
+.plan-card .plan-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.plan-card .plan-price {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #ff4d30;
+  margin-bottom: 0.25rem;
+}
+
+.plan-card .plan-price span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #888;
+}
+
+.plan-card .plan-duration {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1.5rem;
+}
+
+.plan-card .plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+}
+
+.plan-card .plan-features li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.plan-card .plan-features li:last-child {
+  border-bottom: none;
+}
+
+/* ================================================
+   Subscription Plans Grid - Responsive
+   ================================================ */
+.plans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .plans-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+/* ================================================
+   About Section
+   ================================================ */
+.about_section {
+  padding: 6rem 0;
+  background: #fff;
+}
+
+.about-image-wrapper {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.about-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.about-content h3 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-features .feature-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.about-features .feature-item:hover {
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.about-features .feature-icon {
+  color: #ff4d30;
+  font-size: 1.5rem;
+}
+
+/* ================================================
+   Contact Section
+   ================================================ */
+.contact_section {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+}
+
+.contact-form {
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+}
+
+.contact-input {
+  border: 2px solid #f0f0f0;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.contact-input:focus {
+  border-color: #ff4d30;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 77, 48, 0.1);
+}
+
+/* ================================================
+   Footer
+   ================================================ */
+.cs-footer {
+  background: #0a0a0a;
+  color: #fff;
+  padding: 4rem 0 2rem;
+}
+
+.cs-footer h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.cs-footer p {
+  color: #aaa;
+}
+
+.cs-footer a {
+  color: #ddd;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.cs-footer a:hover {
+  color: #ff4d30;
+}
+
+.cs-footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.cs-footer ul li {
+  margin-bottom: 0.75rem;
+}
+
+/* ================================================
+   Status Badges
+   ================================================ */
+.status-badge {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.pending {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.status-badge.approved {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.rejected {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.available {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.unavailable {
+  background: #fafafa;
+  color: #757575;
+}
+
+/* ================================================
+   Alerts & Messages
+   ================================================ */
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.alert-danger {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.alert-info {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #bbdefb;
+}
+
+.alert-warning {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffe0b2;
+}
+
+/* ================================================
+   Forms - Premium Style
+   ================================================ */
+.form-control {
+  border: 2px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #ff4d30;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 77, 48, 0.1);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+/* ================================================
+   Admin Dashboard Styles
+   ================================================ */
+.admin-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding-top: 80px;
+}
+
+.admin-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-header p {
+  color: #666;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.stat-card .stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ff4d30;
+}
+
+.stat-card .stat-label {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  background: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #666;
+}
+
+.tab-btn:hover {
+  background: #f0f0f0;
+}
+
+.tab-btn.active {
+  background: #ff4d30;
+  color: #fff;
+}
+
+.admin-card {
+  background: #fff;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.admin-card .card-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-card .card-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.admin-card .card-body {
+  padding: 2rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: #333;
+  background: #fafafa;
+}
+
+.admin-table tr:hover {
+  background: #f8f9fa;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  /* margin-bottom: 1.5rem; */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.btn-delete {
+  background: #ffebee;
+  color: #c62828;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+  background: #c62828;
+  color: #fff;
+}
+
+.btn-approve {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-right: 0.5rem;
+}
+
+.btn-approve:hover {
+  background: #2e7d32;
+  color: #fff;
+}
+
+.btn-reject {
+  background: #ffebee;
+  color: #c62828;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-reject:hover {
+  background: #c62828;
+  color: #fff;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+/* ================================================
+   Dashboard Page Styles
+   ================================================ */
+.dashboard-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding-top: 80px;
+}
+
+.dashboard-container {
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* ================================================
+   Auth Pages
+   ================================================ */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+  padding-top: 80px;
+}
+
+.auth-card {
+  background: #fff;
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-card .form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* ================================================
+   Smooth Scroll Behavior
+   ================================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ================================================
+   Responsive Design - Mobile First
+   ================================================ */
+@media (max-width: 991px) {
+  .cs-navbar {
+    padding: calc(0.55rem + var(--cs-safe-top)) 1rem 0.55rem;
+  }
+
+  .cs-navbar .brand {
+    font-size: 1.75rem;
+  }
+  
+  .mobile-menu-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+  
+  .cs-nav-links {
+    display: none;
+    position: fixed;
+    top: var(--cs-navbar-offset);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.98);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 1rem 1.5rem;
+    overflow-y: auto;
+    z-index: 999;
+  }
+  
+  .cs-nav-links.mobile-open {
+    display: flex;
+  }
+  
+  .cs-nav-links .nav-link {
+    font-size: 1.05rem;
+    font-weight: 600;
+    width: min(320px, 92vw);
+    text-align: center;
+    padding: 0.7rem 0.75rem;
+    border-radius: 10px;
+    background: #f7f7f7;
+  }
+  
+  .feature-cards {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+
+  /* Mobile-specific card grid adjustments */
+  .cs-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .plans-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .plan-card {
+    margin: 0;
+  }
+
+  .cs-card {
+    margin: 0;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .admin-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .cs-navbar {
+    padding: calc(0.5rem + var(--cs-safe-top)) 0.85rem 0.5rem;
+  }
+
+  .cs-navbar .brand {
+    font-size: 1.65rem;
+  }
+
+  .cs-hero .hero-content {
+    padding: 6rem 1.5rem;
+  }
+  
+  .cs-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .cs-hero .lead {
+    font-size: 1rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .plan-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .plan-card .plan-price {
+    font-size: 2.25rem;
+  }
+}
+
+/* Tablet Layout - 2 columns for cards */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .cs-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.75rem;
+  }
+
+  .plans-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.75rem;
+  }
+}
+
+/* Additional small screen styles */
+@media (max-width: 640px) {
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-card .stat-number {
+    font-size: 1.75rem;
+  }
+  
+  .admin-card .card-body {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  
+  .auth-card {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+}
+
+/* ================================================
+   Animations
+   ================================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Page transition */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}
+
+/* ================================================
+   Utility Classes
+   ================================================ */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 0.5rem !important; }
+.mb-2 { margin-bottom: 1rem !important; }
+.mb-3 { margin-bottom: 1.5rem !important; }
+.mb-4 { margin-bottom: 2rem !important; }
+.mt-3 { margin-top: 1.5rem !important; }
+.mt-4 { margin-top: 2rem !important; }
+.pt-4 { padding-top: 2rem !important; }
+.py-5 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+.gap-3 { gap: 1rem !important; }
+.d-flex { display: flex !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.align-items-center { align-items: center !important; }
+.justify-content-center { justify-content: center !important; }
+.w-100 { width: 100% !important; }

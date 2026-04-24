@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <meta charset="UTF-8"> -->
+    <!-- <link rel="icon" href="/favicon.ico"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>CarSwap - Premium Car Subscription</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/assets/main.css" as="style">
+    
+    <!-- Critical CSS inline (optional - for faster LCP) -->
+    <style>
+      /* Critical path styles for hero section */
+      body { margin: 0; padding: 0; }
+      .cs-hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
+      .hero-content h1 { font-size: 3.5rem; font-weight: 700; color: white; z-index: 10; position: relative; }
+    </style>
+    
+    <link rel="stylesheet" href="/src/assets/main.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
