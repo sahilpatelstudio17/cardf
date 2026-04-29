@@ -411,7 +411,7 @@ const getCarImage = (car) => {
   const placeholder = 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&auto=format&fit=crop'
   if (!car?.image) return placeholder
   if (car.image.startsWith('http')) return car.image
-  return `http://localhost:8000${car.image}`
+  return `https://cardb-1.onrender.com${car.image}`
 }
 
 // Check subscription (use cached data - NO API CALL)

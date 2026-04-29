@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://cardb-1.onrender.com"
 const N8N_CONTACT_WEBHOOK_URL = 'https://carswap.app.n8n.cloud/webhook/9edcc909-6588-422d-8a74-5325973b9210'
 
 // axios instance

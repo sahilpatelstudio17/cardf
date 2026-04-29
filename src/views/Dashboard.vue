@@ -327,7 +327,7 @@ const getCarImage = (car) => {
   if (!car) return placeholder
   if (car.image) {
     if (car.image.startsWith('http')) return car.image
-    return `http://localhost:8000${car.image}`
+    return `https://cardb-1.onrender.com${car.image}`
   }
   return placeholder
 }
