@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://cardb-1.onrender.com"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
 const N8N_CONTACT_WEBHOOK_URL = 'https://carswap.app.n8n.cloud/webhook/9edcc909-6588-422d-8a74-5325973b9210'
 
 // axios instance
@@ -99,7 +99,11 @@ export const subscriptionAPI = {
       driver_service_details: driverServiceDetails
     })
   },
-  getUserSubscription: () => apiClient.get('/my-subscription')
+  getUserSubscription: () => apiClient.get('/my-subscription'),
+  createReturnRequest: (subscriptionId, carId, reason = '') =>
+    apiClient.post('/return-request', { subscription_id: subscriptionId, car_id: carId, reason }),
+  getMyReturnRequests: () => apiClient.get('/my-return-requests'),
+  cancelReturnRequest: (returnId) => apiClient.delete(`/return-request/${returnId}`)
 }
 
 // booking endpoints
@@ -111,6 +115,24 @@ export const bookingAPI = {
 }
 
 // payment endpoints
+const buildRenewalVerificationPayload = (
+  razorpayPaymentIdOrPayload,
+  razorpayOrderId,
+  razorpaySignature,
+  planId
+) => {
+  if (typeof razorpayPaymentIdOrPayload === 'object' && razorpayPaymentIdOrPayload !== null) {
+    return razorpayPaymentIdOrPayload
+  }
+
+  return {
+    razorpay_payment_id: razorpayPaymentIdOrPayload,
+    razorpay_order_id: razorpayOrderId,
+    razorpay_signature: razorpaySignature,
+    plan_id: planId
+  }
+}
+
 export const paymentAPI = {
   createRazorpayOrder: (planId, selectedCarIds, driverServiceDetails = null) =>
     apiClient.post('/payments/razorpay/order', {
@@ -134,7 +156,44 @@ export const paymentAPI = {
       plan_id: planId,
       selected_car_ids: selectedCarIds,
       driver_service_details: driverServiceDetails
-    })
+    }),
+
+  createRazorpayRenewalOrder: (planId) =>
+    apiClient.post('/payments/razorpay/renewal-order', {
+      plan_id: planId
+    }),
+
+  verifyRenewalPayment: (
+    razorpayPaymentIdOrPayload,
+    razorpayOrderId,
+    razorpaySignature,
+    planId
+  ) =>
+    apiClient.post(
+      '/payments/razorpay/verify-and-upgrade',
+      buildRenewalVerificationPayload(
+        razorpayPaymentIdOrPayload,
+        razorpayOrderId,
+        razorpaySignature,
+        planId
+      )
+    ),
+
+  verifyPaymentAndUpgrade: (
+    razorpayPaymentIdOrPayload,
+    razorpayOrderId,
+    razorpaySignature,
+    planId
+  ) =>
+    apiClient.post(
+      '/payments/razorpay/verify-and-upgrade',
+      buildRenewalVerificationPayload(
+        razorpayPaymentIdOrPayload,
+        razorpayOrderId,
+        razorpaySignature,
+        planId
+      )
+    )
 }
 
 // swap endpoints
@@ -235,6 +294,14 @@ export const adminAPI = {
     apiClient.post(`/admin/swap-requests/${swapId}/approve`, { admin_note: adminNote }),
   rejectSwap: (swapId, adminNote = '') =>
     apiClient.post(`/admin/swap-requests/${swapId}/reject`, { admin_note: adminNote }),
+  
+  // Return Requests
+  listReturnRequests: (status = null) =>
+    apiClient.get('/admin/return-requests', { params: status ? { status } : {} }),
+  approveReturnRequest: (returnId, adminNote = '') =>
+    apiClient.post(`/admin/return-requests/${returnId}/approve`, { admin_note: adminNote }),
+  rejectReturnRequest: (returnId, adminNote = '') =>
+    apiClient.post(`/admin/return-requests/${returnId}/reject`, { admin_note: adminNote }),
   
   // Contacts
   listContacts: () => apiClient.get('/admin/contacts'),

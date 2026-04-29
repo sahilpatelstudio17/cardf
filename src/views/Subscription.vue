@@ -188,9 +188,15 @@
                   <label>Driver Service</label>
                   <p>Open the driver service form to add pickup and driver details.</p>
                 </div>
-                <button type="button" class="btn btn-secondary driver-service-btn" @click="openDriverServiceForm">
+                <button
+                  type="button"
+                  class="btn btn-secondary driver-service-btn"
+                  @click="openDriverServiceForm"
+                  :disabled="!driverServiceAllowed"
+                >
                   {{ formData.driverService ? 'Edit Driver Service' : 'Add Driver Service' }}
                 </button>
+                <small v-if="!driverServiceAllowed && selectedPlan" class="text-danger" style="margin-left:12px">Driver service is available only on Pro plans</small>
               </div>
 
               <div v-if="formData.driverService" class="driver-service-summary">
@@ -636,7 +642,7 @@ const placeholder = 'https://images.unsplash.com/photo-1542362567-b07e54358753?q
 const getCarImage = (car) => {
   if (car?.image) {
     if (car.image.startsWith('http')) return car.image
-    return `https://cardb-1.onrender.com${car.image}`
+    return `http://localhost:8000${car.image}`
   }
   return placeholder
 }
@@ -674,6 +680,15 @@ const filteredCars = computed(() => {
 const maxSelectableCars = computed(() => {
   if (!selectedPlan.value) return 0
   return selectedPlan.value.max_active_bookings || 1
+})
+
+// Driver service availability: only available on 'pro' plans (plan name contains 'pro' or tier === 'pro')
+const driverServiceAllowed = computed(() => {
+  const plan = selectedPlan.value
+  if (!plan) return false
+  const name = (plan.name || '').toLowerCase()
+  const tier = (plan.tier || '').toLowerCase()
+  return name.includes('pro') || tier === 'pro' || plan.is_pro === true
 })
 
 const isCarSelected = (car) => selectedCars.value.some(item => item.id === car.id)
@@ -734,6 +749,10 @@ const validateFieldLicenseExpiry = () => {
 }
 
 const openDriverServiceForm = () => {
+  if (!driverServiceAllowed.value) {
+    errorMessage.value = 'Driver service is available only on Pro plans'
+    return
+  }
   if (formData.value.driverService) {
     driverServiceDraft.value = {
       ...formData.value.driverService,

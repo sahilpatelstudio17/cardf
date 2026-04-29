@@ -53,6 +53,27 @@ export const useCacheStore = defineStore('cache', () => {
     }
   }
 
+  // Fetch single car by id and cache it
+  const fetchCarById = async (carId) => {
+    if (carId == null) return null
+    const existing = cars.value.find(c => c.id == carId)
+    if (existing) return existing
+
+    try {
+      const res = await carsAPI.getCar(carId)
+      const carObj = res.data
+      if (carObj) {
+        // push into cached cars
+        cars.value.push(carObj)
+        return carObj
+      }
+    } catch (error) {
+      console.error('Failed to fetch car by id', carId, error)
+      return null
+    }
+    return null
+  }
+
   // Actions - Load Subscription Plans
   const loadPlans = async () => {
     // If already cached, return immediately (no API call)
@@ -257,6 +278,7 @@ export const useCacheStore = defineStore('cache', () => {
       carsCached.value = false
       return loadCars()
     },
+    fetchCarById,
     refreshPlans: () => {
       plansCached.value = false
       return loadPlans()

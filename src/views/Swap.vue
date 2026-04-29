@@ -220,7 +220,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
-import { carsAPI, swapAPI, bookingAPI } from '../services/api'
+import { swapAPI, subscriptionAPI } from '../services/api'
 import { useCacheStore } from '../stores/cacheStore'
 
 const cacheStore = useCacheStore()
@@ -257,7 +257,7 @@ const selectCarAndScroll = (car) => {
 const getCarImage = (car) => {
   if (!car?.image) return null
   if (car.image.startsWith('http')) return car.image
-  return `https://cardb-1.onrender.com${car.image}`
+  return `http://localhost:8000${car.image}`
 }
 
 const remainingSwaps = computed(() => {
@@ -298,56 +298,62 @@ const loadData = async () => {
     
     // Use current car from subscription
     selectedFromCar.value = sub.car
-    
-    // Load ALL approved bookings (from cache - NO API CALL)
+
+    const returnRequestsRes = await subscriptionAPI.getMyReturnRequests().catch(() => null)
+    const latestReturnTimes = new Map()
+    for (const returnRequest of (returnRequestsRes?.data || [])) {
+      if (!['pending', 'approved'].includes((returnRequest.status || '').toLowerCase()) || !returnRequest.car_id) {
+        continue
+      }
+      const returnSeenAt = new Date(returnRequest.updated_at || returnRequest.created_at || Date.now())
+      const previousSeenAt = latestReturnTimes.get(returnRequest.car_id)
+      if (!previousSeenAt || returnSeenAt > previousSeenAt) {
+        latestReturnTimes.set(returnRequest.car_id, returnSeenAt)
+      }
+    }
+
+    const seenCarIds = new Set()
+    const swappedFromCarIds = new Set()
     const allAvailableCarsToSwapFrom = []
+    const addCandidateCar = (car, createdAt, source) => {
+      if (!car?.id || seenCarIds.has(car.id)) {
+        return
+      }
+
+      seenCarIds.add(car.id)
+      allAvailableCarsToSwapFrom.push({
+        id: `${source}_${car.id}_${createdAt || 'current'}`,
+        car,
+        status: 'approved',
+        source,
+        created_at: createdAt || new Date().toISOString()
+      })
+    }
+
+    addCandidateCar(sub.car, sub.start_date, 'subscription')
+
     const cachedBookings = cacheStore.userBookings || []
-    const approvedBookings = cachedBookings.filter(b => b.status === 'approved')
-    
-    // Add all approved bookings to the list
-    const bookingCars = approvedBookings.map(booking => ({
-      id: booking.id,
-      car: booking.car,
-      status: 'approved',
-      source: 'booking',
-      created_at: booking.created_at
-    }))
-    allAvailableCarsToSwapFrom.push(...bookingCars)
-    
-    // Load swap history (from cache - NO API CALL)
-    const swappedFromCarIds = [] // Track which cars have been swapped FROM
+    const approvedBookings = cachedBookings.filter(booking => booking.status === 'approved')
+    for (const booking of approvedBookings) {
+      let bookingCar = booking.car
+      if (!bookingCar && booking.car_id) {
+        bookingCar = await cacheStore.fetchCarById(booking.car_id)
+      }
+      addCandidateCar(bookingCar, booking.created_at, 'booking')
+    }
+
     const cachedSwaps = cacheStore.swapHistory || []
-    const approvedSwaps = cachedSwaps.filter(s => s.status === 'approved')
-    
-    // Collect all from_car_ids that have been swapped FROM (these should be removed)
-    approvedSwaps.forEach(swap => {
-      if (swap.from_car_id) {
-        swappedFromCarIds.push(swap.from_car_id)
-      }
-    })
-    
-    // Add ALL approved swap cars (TO cars) to the list
+    const approvedSwaps = cachedSwaps.filter(swap => swap.status === 'approved')
     for (const swap of approvedSwaps) {
-      try {
-        let swapCar = swap.to_car
-        if (!swapCar && swap.to_car_id) {
-          const carRes = await carsAPI.getCar(swap.to_car_id)
-          swapCar = carRes.data
-        }
-        
-        // Only add if it's not already in our list (avoid duplicates)
-        if (swapCar && !allAvailableCarsToSwapFrom.some(item => item.car?.id === swapCar.id)) {
-          allAvailableCarsToSwapFrom.push({
-            id: `swap_car_${swapCar.id}_${swap.id}`,
-            car: swapCar,
-            status: 'approved',
-            source: 'swap',
-            created_at: swap.timestamp
-          })
-        }
-      } catch (e) {
-        // Unable to fetch swap car
+      if (swap.from_car_id) {
+        swappedFromCarIds.add(swap.from_car_id)
       }
+
+      let swapCar = swap.to_car
+      if (!swapCar && swap.to_car_id) {
+        swapCar = await cacheStore.fetchCarById(swap.to_car_id)
+      }
+      addCandidateCar(swapCar, swap.timestamp, 'swap')
     }
     
     // Check for pending swap
@@ -361,15 +367,24 @@ const loadData = async () => {
       pendingSwap.value = { ...pending, to_car: pendingToCar }
     }
     
-    // REMOVE bookings that have been swapped FROM - only keep active cars
+    // Keep only active cars that are not already swapped away or returned.
     const activeCars = allAvailableCarsToSwapFrom.filter(item => 
-      !swappedFromCarIds.includes(item.car?.id)
+      item.car?.id &&
+      !swappedFromCarIds.has(item.car.id) &&
+      (
+        !latestReturnTimes.has(item.car.id) ||
+        new Date(item.created_at) > latestReturnTimes.get(item.car.id)
+      )
     )
     
     // Sort by creation date (newest first) and display only active cars
     bookings.value = activeCars.sort((a, b) => 
       new Date(b.created_at) - new Date(a.created_at)
     )
+
+    if (bookings.value.length > 0) {
+      selectedFromCar.value = bookings.value[0].car
+    }
     
     // Use cached cars (NO API CALL)
     const cachedCars = cacheStore.cars || []

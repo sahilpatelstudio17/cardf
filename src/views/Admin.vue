@@ -45,6 +45,10 @@
           Swap Requests
           <span v-if="stats.pending_swaps > 0" class="badge">{{ stats.pending_swaps }}</span>
         </button>
+        <button :class="['tab-btn', { active: activeTab === 'returns' }]" @click="activeTab = 'returns'">
+          Return Requests
+          <span v-if="stats.pending_returns > 0" class="badge">{{ stats.pending_returns }}</span>
+        </button>
         <button :class="['tab-btn', { active: activeTab === 'cars' }]" @click="activeTab = 'cars'">Cars</button>
         <button :class="['tab-btn', { active: activeTab === 'plans' }]" @click="activeTab = 'plans'">Plans</button>
         <button :class="['tab-btn', { active: activeTab === 'subscriptions' }]" @click="activeTab = 'subscriptions'">Subscriptions</button>
@@ -175,6 +179,76 @@
                       </button>
                     </div>
                     <span v-else class="text-muted">{{ swap.admin_note || '-' }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return Requests Tab -->
+      <div v-if="activeTab === 'returns'" class="tab-content">
+        <div class="admin-card">
+          <div class="card-header">
+            <h3>Return Requests</h3>
+            <div class="filter-group">
+              <select v-model="returnFilter" @change="loadReturnRequests" class="form-control form-control-sm">
+                <option value="">All Returns</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body">
+            <div v-if="isLoadingReturns" class="loading">Loading...</div>
+            <div v-else-if="returnList.length === 0" class="empty-state">No return requests</div>
+            <table v-else class="admin-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Car</th>
+                  <th>Status</th>
+                  <th>Reason</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="ret in returnList" :key="ret.id">
+                  <td>
+                    <div class="user-info">
+                      <strong>{{ ret.user?.full_name || 'N/A' }}</strong>
+                      <small>{{ ret.user?.email }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="car-info">
+                      <img v-if="ret.car?.image" :src="getCarImage(ret.car)" loading="lazy" :alt="ret.car.name" class="car-thumb" />
+                      <div>
+                        <strong>{{ ret.car?.brand }} {{ ret.car?.name }}</strong>
+                        <small>{{ ret.car?.category }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span :class="['status-badge', ret.status || 'pending']">{{ ret.status || 'pending' }}</span>
+                  </td>
+                  <td>
+                    <small>{{ ret.reason || '-' }}</small>
+                  </td>
+                  <td>{{ formatDate(ret.created_at) }}</td>
+                  <td>
+                    <div v-if="ret.status === 'pending'" class="action-buttons">
+                      <button class="btn-approve" @click="approveReturn(ret.id)" :disabled="isProcessingReturn[ret.id]">
+                        {{ isProcessingReturn[ret.id] === 'approve' ? '...' : 'Approve' }}
+                      </button>
+                      <button class="btn-reject" @click="rejectReturn(ret.id)" :disabled="isProcessingReturn[ret.id]">
+                        {{ isProcessingReturn[ret.id] === 'reject' ? '...' : 'Reject' }}
+                      </button>
+                    </div>
+                    <span v-else class="text-muted">{{ ret.admin_note || '-' }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -663,11 +737,13 @@ const subscriptionList = ref([])
 const swapList = ref([])
 const bookingList = ref([])
 const contactList = ref([])
+const returnList = ref([])
 
 // Loading states
 const isLoading = ref(true)
 const isLoadingBookings = ref(true)
 const isLoadingSwaps = ref(true)
+const isLoadingReturns = ref(true)
 const isLoadingContacts = ref(true)
 const isAdding = ref(false)
 const isAddingPlan = ref(false)
@@ -676,10 +752,12 @@ const isDeletingPlan = reactive({})
 const isDeletingUser = reactive({})
 const isProcessing = reactive({})
 const isProcessingSwap = reactive({})
+const isProcessingReturn = reactive({})
 
 // Filters
 const bookingFilter = ref('')
 const swapFilter = ref('')
+const returnFilter = ref('')
 
 // Messages
 const errorMessage = ref('')
@@ -757,7 +835,7 @@ const getDriverPickupLocation = (sub) => {
 const getCarImage = (car) => {
   if (!car?.image) return null
   if (car.image.startsWith('http')) return car.image
-  return `https://cardb-1.onrender.com${car.image}`
+  return `http://localhost:8000${car.image}`
 }
 
 const showSuccess = (msg) => {
@@ -842,6 +920,18 @@ const loadSwaps = async () => {
   }
 }
 
+const loadReturnRequests = async () => {
+  isLoadingReturns.value = true
+  try {
+    const response = await adminAPI.listReturnRequests(returnFilter.value || null)
+    returnList.value = response.data
+  } catch (error) {
+    console.error('Failed to load return requests:', error)
+  } finally {
+    isLoadingReturns.value = false
+  }
+}
+
 const loadContacts = async () => {
   isLoadingContacts.value = true
   try {
@@ -905,6 +995,33 @@ const rejectSwap = async (swapId) => {
     showError(error.response?.data?.detail || 'Failed to reject swap')
   } finally {
     delete isProcessingSwap[swapId]
+  }
+}
+
+// Return request actions
+const approveReturn = async (returnId) => {
+  isProcessingReturn[returnId] = 'approve'
+  try {
+    await adminAPI.approveReturnRequest(returnId)
+    showSuccess('Return request approved! Subscription has been ended.')
+    await Promise.all([loadReturnRequests(), loadStats()])
+  } catch (error) {
+    showError(error.response?.data?.detail || 'Failed to approve return request')
+  } finally {
+    delete isProcessingReturn[returnId]
+  }
+}
+
+const rejectReturn = async (returnId) => {
+  isProcessingReturn[returnId] = 'reject'
+  try {
+    await adminAPI.rejectReturnRequest(returnId)
+    showSuccess('Return request rejected')
+    await Promise.all([loadReturnRequests(), loadStats()])
+  } catch (error) {
+    showError(error.response?.data?.detail || 'Failed to reject return request')
+  } finally {
+    delete isProcessingReturn[returnId]
   }
 }
 
@@ -1202,6 +1319,7 @@ onMounted(async () => {
     loadSubscriptions(),
     loadBookings(),
     loadSwaps(),
+    loadReturnRequests(),
     loadContacts()
   ])
 })

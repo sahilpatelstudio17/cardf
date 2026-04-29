@@ -433,7 +433,7 @@ const placeholder = 'https://images.unsplash.com/photo-1542362567-b07e54358753?q
 const getCarImage = (car) => {
   if (car?.image) {
     if (car.image.startsWith('http')) return car.image
-    return `https://cardb-1.onrender.com${car.image}`
+    return `http://localhost:8000${car.image}`
   }
   return placeholder
 }

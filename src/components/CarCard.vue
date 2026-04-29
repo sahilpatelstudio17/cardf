@@ -62,7 +62,7 @@ const placeholder = 'https://images.unsplash.com/photo-1542362567-b07e54358753?q
 const imageSrc = computed(() => {
   if (props.car?.image) {
     if (props.car.image.startsWith('http')) return props.car.image
-    return `https://cardb-1.onrender.com${props.car.image}`
+    return `http://localhost:8000${props.car.image}`
   }
   return placeholder
 })
